@@ -1,5 +1,6 @@
 /**
  * Created by petricek on 4/21/14.
+ * For fun
  */
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -10,6 +11,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.fs.FileSystem;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,12 +26,16 @@ public class Dictionary {
         System.out.println("Go");
 
         Configuration conf = new Configuration();
-        Job job = new Job(conf, "dictionary");
+        Job job = Job.getInstance(conf);
+        job.setJobName("dictionary");
         job.setJarByClass(Dictionary.class);
         job.setMapperClass(WordMapper.class);
         job.setReducerClass(AllTranslationsReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
+
+        FileSystem fs = FileSystem.get(conf);
+        fs.delete(new Path(args[1]), true); // delete file, true for recursive
 
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
